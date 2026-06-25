@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Osmanlı Hanedanı — Soy Ağacı</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header id="topbar">
+  <button class="tb-btn" id="btnMenu" aria-label="Menü" style="visibility:hidden">☰</button>
+  <h1>Osmanlı Hanedanı — Soy Ağacı</h1>
+
+</header>
+
+<!-- SIDEBAR (gizli, ileride kullanılacak) -->
+<aside id="sidebar" style="display:none"></aside>
+
+<!-- CANVAS -->
+<div id="myDiagramDiv"></div>
+
+<!-- FLOATING FİLTRELER (sağ üst) -->
+<div id="filter-panel">
+
+  <div class="fp-section">
+    <div class="fp-title">Katman</div>
+    <label class="fp-chk"><input type="checkbox" id="togBio"  checked><span>Soy bağları</span></label>
+    <label class="fp-chk"><input type="checkbox" id="togSucc" checked><span>Saltanat geçişleri</span></label>
+    <label class="fp-chk"><input type="checkbox" id="togEs"   checked><span>Eşler</span></label>
+    <label class="fp-chk"><input type="checkbox" id="togSeh"  checked><span>Şehzadeler</span></label>
+  </div>
+
+  <div class="fp-sep"></div>
+
+  <div class="fp-section">
+    <div class="fp-title">Geçiş tipi</div>
+    <label class="fp-chk"><input type="checkbox" data-succ="ogul"   checked>
+      <span class="fp-dot" style="background:#4AAF9A"></span><span>Oğul</span></label>
+    <label class="fp-chk"><input type="checkbox" data-succ="erkek"  checked>
+      <span class="fp-dot" style="background:#6BB4C2"></span><span>Kardeş</span></label>
+    <label class="fp-chk"><input type="checkbox" data-succ="isyan"  checked>
+      <span class="fp-dot" style="background:#D4735A"></span><span>İsyan</span></label>
+    <label class="fp-chk"><input type="checkbox" data-succ="fetret" checked>
+      <span class="fp-dot" style="background:#C8B86A"></span><span>Fetret</span></label>
+  </div>
+
+  <div class="fp-sep"></div>
+
+  <div class="fp-section">
+    <div class="fp-title">Dönem</div>
+    <label class="fp-chk"><input type="checkbox" data-period="kuruluş"   checked>
+      <span class="fp-dot" style="background:#6BB4C2"></span><span>Kuruluş</span></label>
+    <label class="fp-chk"><input type="checkbox" data-period="yükseliş"  checked>
+      <span class="fp-dot" style="background:#4AAF9A"></span><span>Yükseliş</span></label>
+    <label class="fp-chk"><input type="checkbox" data-period="duraklama" checked>
+      <span class="fp-dot" style="background:#C8B86A"></span><span>Duraklama</span></label>
+    <label class="fp-chk"><input type="checkbox" data-period="gerileme"  checked>
+      <span class="fp-dot" style="background:#C4895A"></span><span>Gerileme</span></label>
+    <label class="fp-chk"><input type="checkbox" data-period="çöküş"     checked>
+      <span class="fp-dot" style="background:#B87AAE"></span><span>Son Dönem</span></label>
+  </div>
+
+</div>
+
+<!-- ZOOM KONTROLLER -->
+<div id="zoom-controls">
+  <button class="zc-btn" id="btnZoomIn"  title="Yakınlaş">＋</button>
+  <button class="zc-btn" id="btnFit"     title="Sığdır">⊡</button>
+  <button class="zc-btn" id="btnZoomOut" title="Uzaklaş">－</button>
+</div>
+
+<!-- MINIMAP -->
+<div id="minimap-wrap">
+  <div id="minimap-title">Harita</div>
+  <div id="minimap"></div>
+</div>
+
+<!-- LEGEND -->
+<div id="legend">
+  <div class="leg"><div class="leg-line leg-bio"></div> Soy bağı</div>
+  <div class="leg"><div class="leg-line" style="background:#4AAF9A"></div> Oğul geçişi</div>
+  <div class="leg"><div class="leg-line leg-dash" style="color:#6BB4C2"></div> Kardeş</div>
+  <div class="leg"><div class="leg-line leg-dash" style="color:#D4735A"></div> İsyan</div>
+</div>
+
+<!-- DETAIL PANEL -->
+<div id="detail" class="hidden">
+  <button id="detailClose">✕</button>
+  <div id="detailBody"></div>
+</div>
+
+<!-- GoJS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/gojs@2.3.18/release/go.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
