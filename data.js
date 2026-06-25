@@ -3,12 +3,11 @@ const WP = 'https://upload.wikimedia.org/wikipedia/commons/thumb/';
 
 /* ── PERIOD STYLES ─────────────────────────────────────── */
 const PERIODS = {
-  // Palet: İznik çini motifi — lacivert, firuze, krem, altın
-  kuruluş:   { label:'Kuruluş',   y:'1299–1402', fill:'#132C50', stroke:'#6BB4C2', text:'#d7d2c2' },
-  yükseliş:  { label:'Yükseliş',  y:'1402–1566', fill:'#0D3530', stroke:'#4AAF9A', text:'#c8e8e2' },
-  duraklama: { label:'Duraklama', y:'1566–1683', fill:'#2A2A18', stroke:'#C8B86A', text:'#e8dfa0' },
-  gerileme:  { label:'Gerileme',  y:'1683–1808', fill:'#2E1E10', stroke:'#C4895A', text:'#e8c4a0' },
-  çöküş:     { label:'Son Dönem', y:'1808–1922', fill:'#2A1428', stroke:'#B87AAE', text:'#e0c0dc' },
+  kuruluş:   { label:'Kuruluş',   y:'1299–1402', fill:'#EEEDFE', stroke:'#534AB7', text:'#26215C' },
+  yükseliş:  { label:'Yükseliş',  y:'1402–1566', fill:'#E1F5EE', stroke:'#0F6E56', text:'#04342C' },
+  duraklama: { label:'Duraklama', y:'1566–1683', fill:'#E6F1FB', stroke:'#185FA5', text:'#042C53' },
+  gerileme:  { label:'Gerileme',  y:'1683–1808', fill:'#FAEEDA', stroke:'#854F0B', text:'#412402' },
+  çöküş:     { label:'Son Dönem', y:'1808–1922', fill:'#FBEAF0', stroke:'#993556', text:'#4B1528' },
 };
 
 function periodOf(no) {
@@ -21,7 +20,6 @@ function periodOf(no) {
 
 /* ── SUCCESSION STYLES ─────────────────────────────────── */
 const SUCC_STYLE = {
-  // Saltanat geçiş ok renkleri — parlak, koyu zeminde görünür
   ogul:   { stroke:'#4AAF9A', dash:'',         w:2.5, label:'Oğul — veraset'          },
   erkek:  { stroke:'#6BB4C2', dash:'10,5',     w:2.5, label:'Erkek kardeş (ekberiyet)' },
   isyan:  { stroke:'#D4735A', dash:'5,4',      w:2.5, label:'İsyan / tahttan indirme'  },
@@ -47,7 +45,7 @@ const NODES = [
   { id:'alaed1',   ad:'Alaeddin Paşa', tip:'sehzade', pid:'p1', yil_d:1285, yil_v:1331, not:'İlk Osmanlı sadrazamı' },
 
   // ── 2. Orhan
-  { id:'p2', ad:'Orhan Gazi', tip:'padisah', pid:'p1', no:2, yil_d:1281, yil_v:1362,
+  { id:'p2', ad:'Orhan Gazi', tip:'padisah', pid:'p1', anne_id:'e_malhun', no:2, yil_d:1281, yil_v:1362,
     img: WP+'6/69/Orhan_Gazi.jpg/200px-Orhan_Gazi.jpg',
     baba:'Osman Gazi (1.)', anne:'Mal Hatun',
     gecis_gelen:'Babası Osman Gazi\'nin vefatı üzerine.',
@@ -57,11 +55,11 @@ const NODES = [
     ozet:'Bursa\'yı fethetti, başkent yaptı. İlk düzenli ordu birlikleri. Rumeli\'ye geçişi başlattı.',
     badges:[] },
   { id:'e_nilufer', ad:'Nilüfer Hatun (Rum)', tip:'es', sahi:'p2' },
-  { id:'suly1', ad:'Süleyman Paşa', tip:'sehzade', pid:'p2', yil_d:1316, yil_v:1357, not:'Rumeli fatihi; erken ölüm' },
-  { id:'halil1', ad:'Halil Bey', tip:'sehzade', pid:'p2', yil_d:1323, not:'Bizans\'a rehin' },
+  { id:'suly1', ad:'Süleyman Paşa', tip:'sehzade', pid:'p2', anne_id:'e_nilufer', yil_d:1316, yil_v:1357, not:'Rumeli fatihi; erken ölüm' },
+  { id:'halil1', ad:'Halil Bey', tip:'sehzade', pid:'p2', anne_id:'e_nilufer', yil_d:1323, not:'Bizans\'a rehin' },
 
   // ── 3. I. Murat
-  { id:'p3', ad:'I. Murat', tip:'padisah', pid:'p2', no:3, yil_d:1326, yil_v:1389,
+  { id:'p3', ad:'I. Murat', tip:'padisah', pid:'p2', anne_id:'e_nilufer', no:3, yil_d:1326, yil_v:1389,
     img: WP+'d/d8/Murad_I.jpg/200px-Murad_I.jpg',
     baba:'Orhan Gazi (2.)', anne:'Nilüfer Hatun (Rum)',
     gecis_gelen:'Babası Orhan\'ın vefatı üzerine.',
@@ -71,11 +69,11 @@ const NODES = [
     ozet:'Edirne\'yi fethetti, başkent yaptı. Yeniçeri ocağını kurdu.',
     badges:[{t:'Şehit',c:'#993C1D',bg:'#FAECE7'}] },
   { id:'e_gulcic', ad:'Gülçiçek Hatun', tip:'es', sahi:'p3' },
-  { id:'yakup1', ad:'Yakup Çelebi', tip:'sehzade', pid:'p3', yil_d:1362, yil_v:1389, not:'I. Bayezid tahta çıkınca boğduruldu — ilk kardeş katli' },
-  { id:'savci1', ad:'Savcı Bey', tip:'sehzade', pid:'p3', yil_d:1358, yil_v:1385, not:'İsyan; idam edildi' },
+  { id:'yakup1', ad:'Yakup Çelebi', tip:'sehzade', pid:'p3', anne_id:'e_gulcic', yil_d:1362, yil_v:1389, not:'I. Bayezid tahta çıkınca boğduruldu — ilk kardeş katli' },
+  { id:'savci1', ad:'Savcı Bey', tip:'sehzade', pid:'p3', anne_id:'e_gulcic', yil_d:1358, yil_v:1385, not:'İsyan; idam edildi' },
 
   // ── 4. I. Bayezid
-  { id:'p4', ad:'I. Bayezid', tip:'padisah', pid:'p3', no:4, yil_d:1360, yil_v:1403,
+  { id:'p4', ad:'I. Bayezid', tip:'padisah', pid:'p3', anne_id:'e_gulcic', no:4, yil_d:1360, yil_v:1403,
     img: WP+'3/3a/Bayezid_I.jpg/200px-Bayezid_I.jpg',
     baba:'I. Murat (3.)', anne:'Gülçiçek Hatun',
     gecis_gelen:'Babası Kosova\'da şehit olunca savaş alanında ilan edildi; kardeşi Yakup aynı gün boğduruldu.',
@@ -86,13 +84,13 @@ const NODES = [
     badges:[{t:'Esir düştü',c:'#854F0B',bg:'#FAEEDA'},{t:'Yıldırım',c:'#534AB7',bg:'#EEEDFE'}] },
   { id:'e_dev1', ad:'Devlet Hatun', tip:'es', sahi:'p4' },
   { id:'e_oliv', ad:'Olivera Lazarević (Sırp)', tip:'es', sahi:'p4' },
-  { id:'suly2', ad:'Süleyman Çelebi', tip:'sehzade', pid:'p4', yil_d:1377, yil_v:1411, not:'Fetret\'te Musa tarafından öldürüldü' },
-  { id:'musa1', ad:'Musa Çelebi', tip:'sehzade', pid:'p4', yil_d:1376, yil_v:1413, not:'Fetret\'te Mehmed tarafından öldürüldü' },
-  { id:'isa1', ad:'İsa Çelebi', tip:'sehzade', pid:'p4', yil_d:1380, yil_v:1403, not:'Fetret\'te öldürüldü' },
+  { id:'suly2', ad:'Süleyman Çelebi', tip:'sehzade', pid:'p4', anne_id:'e_dev1', yil_d:1377, yil_v:1411, not:'Fetret\'te Musa tarafından öldürüldü' },
+  { id:'musa1', ad:'Musa Çelebi', tip:'sehzade', pid:'p4', anne_id:'e_dev1', yil_d:1376, yil_v:1413, not:'Fetret\'te Mehmed tarafından öldürüldü' },
+  { id:'isa1', ad:'İsa Çelebi', tip:'sehzade', pid:'p4', anne_id:'e_dev1', yil_d:1380, yil_v:1403, not:'Fetret\'te öldürüldü' },
   { id:'duzmece', ad:'Düzmece Mustafa', tip:'sehzade', pid:'p4', yil_d:1382, yil_v:1422, not:'Timur\'a esir; sonra sahte iddia ile isyan, idam' },
 
   // ── 5. I. Mehmed
-  { id:'p5', ad:'I. Mehmed', tip:'padisah', pid:'p4', no:5, yil_d:1386, yil_v:1421,
+  { id:'p5', ad:'I. Mehmed', tip:'padisah', pid:'p4', anne_id:'e_dev1', no:5, yil_d:1386, yil_v:1421,
     img: WP+'1/13/Mehmed_I.jpg/200px-Mehmed_I.jpg',
     baba:'I. Bayezid (4.)', anne:'Devlet Hatun',
     gecis_gelen:'Fetret Devri\'nde (1402–1413) tüm kardeşlerini yenerek tek hükümdar oldu.',
@@ -116,10 +114,10 @@ const NODES = [
     badges:[{t:'Varna 1444',c:'#0F6E56',bg:'#E1F5EE'}] },
   { id:'e_huma1', ad:'Hüma Hatun', tip:'es', sahi:'p6' },
   { id:'e_mara1', ad:'Mara Branković (Sırp)', tip:'es', sahi:'p6' },
-  { id:'alad2', ad:'Alaeddin Ali Çelebi', tip:'sehzade', pid:'p6', yil_d:1430, yil_v:1443, not:'Genç yaşta vefat' },
+  { id:'alad2', ad:'Alaeddin Ali Çelebi', tip:'sehzade', pid:'p6', anne_id:'e_mara1', yil_d:1430, yil_v:1443, not:'Genç yaşta vefat' },
 
   // ── 7. II. Mehmed Fatih
-  { id:'p7', ad:'II. Mehmed (Fatih)', tip:'padisah', pid:'p6', no:7, yil_d:1432, yil_v:1481,
+  { id:'p7', ad:'II. Mehmed (Fatih)', tip:'padisah', pid:'p6', anne_id:'e_huma1', no:7, yil_d:1432, yil_v:1481,
     img: WP+'a/a9/Fatih_sultan_mehmet.jpg/200px-Fatih_sultan_mehmet.jpg',
     baba:'II. Murat (6.)', anne:'Hüma Hatun',
     gecis_gelen:'Babası II. Murat\'ın vefatıyla tahta geçti; süt kardeşini boğdurdu.',
@@ -130,10 +128,10 @@ const NODES = [
     badges:[{t:'İstanbul fatihi 1453',c:'#0F6E56',bg:'#E1F5EE'}] },
   { id:'e_gulb1', ad:'Gülbahar Hatun', tip:'es', sahi:'p7' },
   { id:'e_sitt1', ad:'Sitti Hatun', tip:'es', sahi:'p7' },
-  { id:'cem1', ad:'Cem Sultan', tip:'sehzade', pid:'p7', yil_d:1459, yil_v:1495, not:'Avrupa\'da 13 yıl rehin; öldü' },
+  { id:'cem1', ad:'Cem Sultan', tip:'sehzade', pid:'p7', anne_id:'e_gulb2', yil_d:1459, yil_v:1495, not:'Avrupa\'da 13 yıl rehin; öldü' },
 
   // ── 8. II. Bayezid
-  { id:'p8', ad:'II. Bayezid', tip:'padisah', pid:'p7', no:8, yil_d:1447, yil_v:1512,
+  { id:'p8', ad:'II. Bayezid', tip:'padisah', pid:'p7', anne_id:'e_gulb1', no:8, yil_d:1447, yil_v:1512,
     img: WP+'d/d3/Bayezid_II.jpg/200px-Bayezid_II.jpg',
     baba:'II. Mehmed / Fatih (7.)', anne:'Gülbahar Hatun',
     gecis_gelen:'Babası Fatih\'in vefatı üzerine.',
@@ -145,10 +143,10 @@ const NODES = [
   { id:'e_bulb1', ad:'Bülbül Hatun', tip:'es', sahi:'p8' },
   { id:'e_gulb2', ad:'Gülbahar Hatun', tip:'es', sahi:'p8' },
   { id:'ahm1b', ad:'Şehzade Ahmed', tip:'sehzade', pid:'p8', yil_d:1465, yil_v:1513, not:'Yavuz tarafından öldürüldü' },
-  { id:'kork1', ad:'Şehzade Korkut', tip:'sehzade', pid:'p8', yil_d:1467, yil_v:1513, not:'Şair; Yavuz tarafından öldürüldü' },
+  { id:'kork1', ad:'Şehzade Korkut', tip:'sehzade', pid:'p8', anne_id:'e_gulb2', yil_d:1467, yil_v:1513, not:'Şair; Yavuz tarafından öldürüldü' },
 
   // ── 9. I. Selim Yavuz
-  { id:'p9', ad:'I. Selim (Yavuz)', tip:'padisah', pid:'p8', no:9, yil_d:1470, yil_v:1520,
+  { id:'p9', ad:'I. Selim (Yavuz)', tip:'padisah', pid:'p8', anne_id:'e_bulb1', no:9, yil_d:1470, yil_v:1520,
     img: WP+'d/d0/Yavuz_Sultan_Selim.jpg/200px-Yavuz_Sultan_Selim.jpg',
     baba:'II. Bayezid (8.)', anne:'Gülbahar Hatun',
     gecis_gelen:'Yeniçeri desteğiyle babasını tahttan indirdi; kardeşlerini öldürttü.',
@@ -160,7 +158,7 @@ const NODES = [
   { id:'e_haf3', ad:'Ayşe Hafsa Sultan (ilk Valide Sultan)', tip:'es', sahi:'p9' },
 
   // ── 10. I. Süleyman Kanuni
-  { id:'p10', ad:'I. Süleyman (Kanuni)', tip:'padisah', pid:'p9', no:10, yil_d:1494, yil_v:1566,
+  { id:'p10', ad:'I. Süleyman (Kanuni)', tip:'padisah', pid:'p9', anne_id:'e_haf3', no:10, yil_d:1494, yil_v:1566,
     img: WP+'b/b8/Suleiman_the_Magnificent2.jpg/200px-Suleiman_the_Magnificent2.jpg',
     baba:'I. Selim / Yavuz (9.)', anne:'Ayşe Hafsa Sultan',
     gecis_gelen:'Babasının tek oğluydu; sorunsuz tahta geçti.',
@@ -171,13 +169,13 @@ const NODES = [
     badges:[{t:'En uzun: 46 yıl',c:'#0F6E56',bg:'#E1F5EE'}] },
   { id:'e_mahid', ad:'Mahidevran / Gülbahar (Çerkez)', tip:'es', sahi:'p10' },
   { id:'e_hurr', ad:'Hürrem Sultan (Roksolana — Ukraynalı)', tip:'es', sahi:'p10' },
-  { id:'must3k', ad:'Şehzade Mustafa', tip:'sehzade', pid:'p10', yil_d:1515, yil_v:1553, not:'Hürrem\'in baskısıyla idam ettirildi' },
-  { id:'bay2', ad:'Şehzade Bayezid', tip:'sehzade', pid:'p10', yil_d:1525, yil_v:1561, not:'İran\'a sığındı; orada öldürüldü' },
-  { id:'cihng', ad:'Şehzade Cihangir', tip:'sehzade', pid:'p10', yil_d:1531, yil_v:1553, not:'Mustafa\'nın ölümüne üzülerek vefat' },
-  { id:'mihrm', ad:'Mihrimah Sultan', tip:'sultan', pid:'p10', yil_d:1522, yil_v:1578 },
+  { id:'must3k', ad:'Şehzade Mustafa', tip:'sehzade', pid:'p10', anne_id:'e_mahid', yil_d:1515, yil_v:1553, not:'Hürrem\'in baskısıyla idam ettirildi' },
+  { id:'bay2', ad:'Şehzade Bayezid', tip:'sehzade', pid:'p10', anne_id:'e_hurr', yil_d:1525, yil_v:1561, not:'İran\'a sığındı; orada öldürüldü' },
+  { id:'cihng', ad:'Şehzade Cihangir', tip:'sehzade', pid:'p10', anne_id:'e_hurr', yil_d:1531, yil_v:1553, not:'Mustafa\'nın ölümüne üzülerek vefat' },
+  { id:'mihrm', ad:'Mihrimah Sultan', tip:'sultan', pid:'p10', anne_id:'e_hurr', yil_d:1522, yil_v:1578 },
 
   // ── 11. II. Selim
-  { id:'p11', ad:'II. Selim', tip:'padisah', pid:'p10', no:11, yil_d:1524, yil_v:1574,
+  { id:'p11', ad:'II. Selim', tip:'padisah', pid:'p10', anne_id:'e_hurr', no:11, yil_d:1524, yil_v:1574,
     img: WP+'8/8e/Selim_II.jpg/200px-Selim_II.jpg',
     baba:'I. Süleyman / Kanuni (10.)', anne:'Hürrem Sultan (Ukraynalı)',
     gecis_gelen:'Babası Sigetvar\'da vefat edince tahta geçti.',
@@ -187,10 +185,10 @@ const NODES = [
     ozet:'Sokullu Mehmed Paşa fiilen yönetti. Kıbrıs alındı. İnebahtı\'da donanma yakıldı (1571).',
     badges:[{t:'İnebahtı yenilgisi',c:'#A32D2D',bg:'#FCEBEB'}] },
   { id:'e_nurb', ad:'Nurbanu Sultan (Venedikli)', tip:'es', sahi:'p11' },
-  { id:'sehz5', ad:'5 kardeş (boğduruldu)', tip:'sehzade', pid:'p11', yil_d:1548, yil_v:1574, not:'III. Murat tahta çıkınca hepsi öldürüldü' },
+  { id:'sehz5', ad:'5 kardeş (boğduruldu)', tip:'sehzade', pid:'p11', anne_id:'e_nurb', yil_d:1548, yil_v:1574, not:'III. Murat tahta çıkınca hepsi öldürüldü' },
 
   // ── 12. III. Murat
-  { id:'p12', ad:'III. Murat', tip:'padisah', pid:'p11', no:12, yil_d:1546, yil_v:1595,
+  { id:'p12', ad:'III. Murat', tip:'padisah', pid:'p11', anne_id:'e_nurb', no:12, yil_d:1546, yil_v:1595,
     img: WP+'3/31/Murad_III.jpg/200px-Murad_III.jpg',
     baba:'II. Selim (11.)', anne:'Nurbanu Sultan (Venedikli)',
     gecis_gelen:'Babası II. Selim\'in vefatı üzerine; 5 kardeşini boğdurdu.',
@@ -200,10 +198,10 @@ const NODES = [
     ozet:'Harem nüfuzu arttı. 20 oğlu, 27 kızı vardı.',
     badges:[] },
   { id:'e_saf1', ad:'Safiye Sultan (Venedikli)', tip:'es', sahi:'p12' },
-  { id:'sehz19', ad:'19 kardeş (öldürüldü)', tip:'sehzade', pid:'p12', yil_d:1567, yil_v:1595, not:'III. Mehmed tahta çıkınca hepsini öldürttü — en kalabalık kardeş katli' },
+  { id:'sehz19', ad:'19 kardeş (öldürüldü)', tip:'sehzade', pid:'p12', anne_id:'e_saf1', yil_d:1567, yil_v:1595, not:'III. Mehmed tahta çıkınca hepsini öldürttü — en kalabalık kardeş katli' },
 
   // ── 13. III. Mehmed
-  { id:'p13', ad:'III. Mehmed', tip:'padisah', pid:'p12', no:13, yil_d:1566, yil_v:1603,
+  { id:'p13', ad:'III. Mehmed', tip:'padisah', pid:'p12', anne_id:'e_saf1', no:13, yil_d:1566, yil_v:1603,
     img: WP+'f/f9/Mehmed_III.jpg/200px-Mehmed_III.jpg',
     baba:'III. Murat (12.)', anne:'Safiye Sultan (Venedikli)',
     gecis_gelen:'Babası III. Murat\'ın vefatı üzerine; 19 kardeşini boğdurttı.',
@@ -213,10 +211,10 @@ const NODES = [
     ozet:'Haçova Zaferi (1596). 19 kardeşini öldürttü — tarihin en kalabalık kardeş katli.',
     badges:[{t:'19 kardeş katli',c:'#A32D2D',bg:'#FCEBEB'}] },
   { id:'e_hand', ad:'Handan Sultan', tip:'es', sahi:'p13' },
-  { id:'mahm2', ad:'Şehzade Mahmud', tip:'sehzade', pid:'p13', yil_d:1593, yil_v:1603, not:'I. Ahmed tarafından öldürüldü' },
+  { id:'mahm2', ad:'Şehzade Mahmud', tip:'sehzade', pid:'p13', anne_id:'e_hand', yil_d:1593, yil_v:1603, not:'I. Ahmed tarafından öldürüldü' },
 
   // ── 14. I. Ahmed
-  { id:'p14', ad:'I. Ahmed', tip:'padisah', pid:'p13', no:14, yil_d:1590, yil_v:1617,
+  { id:'p14', ad:'I. Ahmed', tip:'padisah', pid:'p13', anne_id:'e_hand', no:14, yil_d:1590, yil_v:1617,
     img: WP+'8/8a/Ahmed_I_of_the_Ottoman_Empire.jpg/200px-Ahmed_I_of_the_Ottoman_Empire.jpg',
     baba:'III. Mehmed (13.)', anne:'Handan Sultan',
     gecis_gelen:'Babası III. Mehmed\'in vefatı üzerine 13 yaşında geçti.',
@@ -227,7 +225,7 @@ const NODES = [
     badges:[{t:'Kafes sistemi',c:'#534AB7',bg:'#EEEDFE'},{t:'Sultanahmet',c:'#0F6E56',bg:'#E1F5EE'}] },
 
   // 15 — I. Mustafa
-  { id:'p15', ad:'I. Mustafa', tip:'padisah', pid:'p13', no:15, yil_d:1591, yil_v:1639,
+  { id:'p15', ad:'I. Mustafa', tip:'padisah', pid:'p13', anne_id:'e_hand', no:15, yil_d:1591, yil_v:1639,
     img: WP+'6/65/Mustafa_I_of_the_Ottoman_Empire.jpg/200px-Mustafa_I_of_the_Ottoman_Empire.jpg',
     baba:'III. Mehmed (13.)', anne:'Halime Sultan',
     gecis_gelen:'Ağabeyi I. Ahmed erken vefat edince ekberiyetle tahta geçti — ekberiyet ilk uygulaması.',
@@ -238,10 +236,10 @@ const NODES = [
     badges:[{t:'2× tahttan indi',c:'#854F0B',bg:'#FAEEDA'}] },
   { id:'e_kosm', ad:'Kösem Sultan (Rum — Anastasia)', tip:'es', sahi:'p14' },
   { id:'e_mahf', ad:'Mahfiruz Hatun', tip:'es', sahi:'p14' },
-  { id:'kasim3', ad:'Şehzade Kasım', tip:'sehzade', pid:'p14', yil_d:1614, yil_v:1638, not:'IV. Murat tarafından öldürüldü' },
+  { id:'kasim3', ad:'Şehzade Kasım', tip:'sehzade', pid:'p14', anne_id:'e_kosm', yil_d:1614, yil_v:1638, not:'IV. Murat tarafından öldürüldü' },
 
   // ── 16. II. Osman
-  { id:'p16', ad:'II. Osman (Genç)', tip:'padisah', pid:'p14', no:16, yil_d:1604, yil_v:1622,
+  { id:'p16', ad:'II. Osman (Genç)', tip:'padisah', pid:'p14', anne_id:'e_mahf', no:16, yil_d:1604, yil_v:1622,
     img: WP+'4/41/Osman_II.jpg/200px-Osman_II.jpg',
     baba:'I. Ahmed (14.)', anne:'Mahfiruz Hatun',
     gecis_gelen:'Amcası I. Mustafa indirilince yeğen olarak tahta geçti.',
@@ -252,7 +250,7 @@ const NODES = [
     badges:[{t:'İlk padişah katli',c:'#A32D2D',bg:'#FCEBEB'}] },
 
   // ── 17. IV. Murat
-  { id:'p17', ad:'IV. Murat', tip:'padisah', pid:'p14', no:17, yil_d:1612, yil_v:1640,
+  { id:'p17', ad:'IV. Murat', tip:'padisah', pid:'p14', anne_id:'e_kosm', no:17, yil_d:1612, yil_v:1640,
     img: WP+'9/9b/Murad_IV_of_the_Ottoman_Empire.jpg/200px-Murad_IV_of_the_Ottoman_Empire.jpg',
     baba:'I. Ahmed (14.)', anne:'Kösem Sultan (Rum)',
     gecis_gelen:'Amcası I. Mustafa 2. kez indirilince I. Ahmed\'in en büyük oğlu olarak tahta geçti.',
@@ -263,7 +261,7 @@ const NODES = [
     badges:[{t:'Bağdat fatihi 1638',c:'#0F6E56',bg:'#E1F5EE'}] },
 
   // ── 18. İbrahim
-  { id:'p18', ad:'İbrahim', tip:'padisah', pid:'p14', no:18, yil_d:1615, yil_v:1648,
+  { id:'p18', ad:'İbrahim', tip:'padisah', pid:'p14', anne_id:'e_kosm', no:18, yil_d:1615, yil_v:1648,
     img: WP+'b/b4/Ibrahim_I_of_the_Ottoman_Empire.jpg/200px-Ibrahim_I_of_the_Ottoman_Empire.jpg',
     baba:'I. Ahmed (14.)', anne:'Kösem Sultan',
     gecis_gelen:'Ağabeyi IV. Murat vefat edince kafesten çıkarıldı; kapıyı açmak istemedi.',
@@ -277,7 +275,7 @@ const NODES = [
   { id:'e_muaz', ad:'Muazzez Sultan', tip:'es', sahi:'p18' },
 
   // ── 19. IV. Mehmed
-  { id:'p19', ad:'IV. Mehmed (Avcı)', tip:'padisah', pid:'p18', no:19, yil_d:1642, yil_v:1693,
+  { id:'p19', ad:'IV. Mehmed (Avcı)', tip:'padisah', pid:'p18', anne_id:'e_turh', no:19, yil_d:1642, yil_v:1693,
     img: WP+'5/5b/Mehmed_IV.jpg/200px-Mehmed_IV.jpg',
     baba:'İbrahim (18.)', anne:'Turhan Sultan (Ukraynalı)',
     gecis_gelen:'Babası İbrahim idam edilince 7 yaşında tahta çıkarıldı.',
@@ -288,7 +286,7 @@ const NODES = [
     badges:[{t:'39 yıl',c:'#534AB7',bg:'#EEEDFE'},{t:'7 yaşında',c:'#993556',bg:'#FBEAF0'}] },
 
   // ── 20. II. Süleyman
-  { id:'p20', ad:'II. Süleyman', tip:'padisah', pid:'p18', no:20, yil_d:1642, yil_v:1691,
+  { id:'p20', ad:'II. Süleyman', tip:'padisah', pid:'p18', anne_id:'e_sal1', no:20, yil_d:1642, yil_v:1691,
     img: WP+'5/5c/Suleiman_II_of_the_Ottoman_Empire.jpg/200px-Suleiman_II_of_the_Ottoman_Empire.jpg',
     baba:'İbrahim (18.)', anne:'Saliha Dilaşub Sultan',
     gecis_gelen:'Ağabeyi IV. Mehmed isyanla indirilince en yaşlı şehzade olarak tahta geçti (39 yıl kafeste geçirmişti).',
@@ -299,7 +297,7 @@ const NODES = [
     badges:[] },
 
   // ── 21. II. Ahmed
-  { id:'p21', ad:'II. Ahmed', tip:'padisah', pid:'p18', no:21, yil_d:1643, yil_v:1695,
+  { id:'p21', ad:'II. Ahmed', tip:'padisah', pid:'p18', anne_id:'e_muaz', no:21, yil_d:1643, yil_v:1695,
     img: WP+'a/a9/Ahmed_II_of_the_Ottoman_Empire.jpg/200px-Ahmed_II_of_the_Ottoman_Empire.jpg',
     baba:'İbrahim (18.)', anne:'Muazzez Sultan',
     gecis_gelen:'Ağabeyi II. Süleyman\'ın vefatı üzerine.',
@@ -311,7 +309,7 @@ const NODES = [
   { id:'e_gulns', ad:'Rabia Gülnüş Sultan (Rum)', tip:'es', sahi:'p19' },
 
   // ── 22. II. Mustafa
-  { id:'p22', ad:'II. Mustafa', tip:'padisah', pid:'p19', no:22, yil_d:1664, yil_v:1703,
+  { id:'p22', ad:'II. Mustafa', tip:'padisah', pid:'p19', anne_id:'e_gulns', no:22, yil_d:1664, yil_v:1703,
     img: WP+'e/e8/Mustafa_II_of_the_Ottoman_Empire.jpg/200px-Mustafa_II_of_the_Ottoman_Empire.jpg',
     baba:'IV. Mehmed (19.)', anne:'Rabia Gülnüş Sultan (Rum)',
     gecis_gelen:'Amcası II. Ahmed\'in vefatı üzerine en büyük şehzade olarak tahta geçti.',
@@ -322,7 +320,7 @@ const NODES = [
     badges:[{t:'Karlofça 1699',c:'#854F0B',bg:'#FAEEDA'}] },
 
   // ── 23. III. Ahmed
-  { id:'p23', ad:'III. Ahmed', tip:'padisah', pid:'p19', no:23, yil_d:1673, yil_v:1736,
+  { id:'p23', ad:'III. Ahmed', tip:'padisah', pid:'p19', anne_id:'e_gulns', no:23, yil_d:1673, yil_v:1736,
     img: WP+'e/e9/Ahmed_III_of_the_Ottoman_Empire.jpg/200px-Ahmed_III_of_the_Ottoman_Empire.jpg',
     baba:'IV. Mehmed (19.)', anne:'Rabia Gülnüş Sultan (Rum)',
     gecis_gelen:'Ağabeyi II. Mustafa Edirne Vakası ile indirilince tahta geçti.',
@@ -336,7 +334,7 @@ const NODES = [
   { id:'e_mih2', ad:'Mihrişah Sultan', tip:'es', sahi:'p23' },
 
   // ── 24. I. Mahmud
-  { id:'p24', ad:'I. Mahmud', tip:'padisah', pid:'p22', no:24, yil_d:1696, yil_v:1754,
+  { id:'p24', ad:'I. Mahmud', tip:'padisah', pid:'p22', anne_id:'e_sal2', no:24, yil_d:1696, yil_v:1754,
     img: WP+'d/de/Mahmud_I.jpg/200px-Mahmud_I.jpg',
     baba:'II. Mustafa (22.)', anne:'Saliha Sultan',
     gecis_gelen:'Amcası III. Ahmed Patrona Halil isyanıyla indirilince tahta geçti.',
@@ -347,7 +345,7 @@ const NODES = [
     badges:[] },
 
   // ── 25. III. Osman
-  { id:'p25', ad:'III. Osman', tip:'padisah', pid:'p22', no:25, yil_d:1699, yil_v:1757,
+  { id:'p25', ad:'III. Osman', tip:'padisah', pid:'p22', anne_id:'e_seh1', no:25, yil_d:1699, yil_v:1757,
     img: WP+'1/19/Osman_III.jpg/200px-Osman_III.jpg',
     baba:'II. Mustafa (22.)', anne:'Şehsuvar Sultan',
     gecis_gelen:'Üvey ağabeyi I. Mahmud\'un vefatı üzerine.',
@@ -358,7 +356,7 @@ const NODES = [
     badges:[] },
 
   // ── 26. III. Mustafa
-  { id:'p26', ad:'III. Mustafa', tip:'padisah', pid:'p23', no:26, yil_d:1717, yil_v:1774,
+  { id:'p26', ad:'III. Mustafa', tip:'padisah', pid:'p23', anne_id:'e_mih2', no:26, yil_d:1717, yil_v:1774,
     img: WP+'a/ae/Mustafa_III_of_the_Ottoman_Empire.jpg/200px-Mustafa_III_of_the_Ottoman_Empire.jpg',
     baba:'III. Ahmed (23.)', anne:'Mihrişah Sultan',
     gecis_gelen:'Amca çocuğu III. Osman\'ın vefatı üzerine ekberiyetle tahta geçti.',
@@ -369,7 +367,7 @@ const NODES = [
     badges:[] },
 
   // ── 27. I. Abdülhamid
-  { id:'p27', ad:'I. Abdülhamid', tip:'padisah', pid:'p23', no:27, yil_d:1725, yil_v:1789,
+  { id:'p27', ad:'I. Abdülhamid', tip:'padisah', pid:'p23', anne_id:'e_mih2', no:27, yil_d:1725, yil_v:1789,
     img: WP+'3/3c/Abdulhamid_I.jpg/200px-Abdulhamid_I.jpg',
     baba:'III. Ahmed (23.)', anne:'Rabia Şermi Sultan',
     gecis_gelen:'Ağabeyi III. Mustafa\'nın vefatı üzerine.',
@@ -383,7 +381,7 @@ const NODES = [
   { id:'e_naks', ad:'Nakşidil Sultan', tip:'es', sahi:'p27' },
 
   // ── 28. III. Selim
-  { id:'p28', ad:'III. Selim', tip:'padisah', pid:'p26', no:28, yil_d:1761, yil_v:1808,
+  { id:'p28', ad:'III. Selim', tip:'padisah', pid:'p26', anne_id:'e_mih3', no:28, yil_d:1761, yil_v:1808,
     img: WP+'5/5b/Selim_III.jpg/200px-Selim_III.jpg',
     baba:'III. Mustafa (26.)', anne:'Mihrişah Valide Sultan (Gürcü)',
     gecis_gelen:'Amcası I. Abdülhamid\'in vefatı üzerine.',
@@ -394,7 +392,7 @@ const NODES = [
     badges:[{t:'Nizam-ı Cedid',c:'#534AB7',bg:'#EEEDFE'},{t:'Öldürüldü',c:'#A32D2D',bg:'#FCEBEB'}] },
 
   // ── 29. IV. Mustafa
-  { id:'p29', ad:'IV. Mustafa', tip:'padisah', pid:'p27', no:29, yil_d:1779, yil_v:1808,
+  { id:'p29', ad:'IV. Mustafa', tip:'padisah', pid:'p27', anne_id:'e_snep', no:29, yil_d:1779, yil_v:1808,
     img: WP+'4/44/Mustafa_IV.jpg/200px-Mustafa_IV.jpg',
     baba:'I. Abdülhamid (27.)', anne:'Ayşe Sineperver Sultan',
     gecis_gelen:'Amca çocuğu III. Selim isyanla indirilince tahta geçti.',
@@ -405,7 +403,7 @@ const NODES = [
     badges:[{t:'İdam edildi',c:'#A32D2D',bg:'#FCEBEB'}] },
 
   // ── 30. II. Mahmud
-  { id:'p30', ad:'II. Mahmud', tip:'padisah', pid:'p27', no:30, yil_d:1785, yil_v:1839,
+  { id:'p30', ad:'II. Mahmud', tip:'padisah', pid:'p27', anne_id:'e_naks', no:30, yil_d:1785, yil_v:1839,
     img: WP+'a/a0/Mahmud_II.jpg/200px-Mahmud_II.jpg',
     baba:'I. Abdülhamid (27.)', anne:'Nakşidil Sultan',
     gecis_gelen:'Üvey ağabeyi IV. Mustafa Alemdar Paşa tarafından indirilince geçti.',
@@ -418,7 +416,7 @@ const NODES = [
   { id:'e_pert', ad:'Pertevniyal Valide Sultan', tip:'es', sahi:'p30' },
 
   // ── 31. Abdülmecid I
-  { id:'p31', ad:'Abdülmecid I', tip:'padisah', pid:'p30', no:31, yil_d:1823, yil_v:1861,
+  { id:'p31', ad:'Abdülmecid I', tip:'padisah', pid:'p30', anne_id:'e_bezm', no:31, yil_d:1823, yil_v:1861,
     img: WP+'8/84/Sultan_Abdülmecid_I.jpg/200px-Sultan_Abdülmecid_I.jpg',
     baba:'II. Mahmud (30.)', anne:'Bezmiâlem Valide Sultan (Gürcü)',
     gecis_gelen:'Babası II. Mahmud\'un vefatı üzerine.',
@@ -429,7 +427,7 @@ const NODES = [
     badges:[{t:'Tanzimat 1839',c:'#185FA5',bg:'#E6F1FB'}] },
 
   // ── 32. Abdülaziz
-  { id:'p32', ad:'Abdülaziz', tip:'padisah', pid:'p30', no:32, yil_d:1830, yil_v:1876,
+  { id:'p32', ad:'Abdülaziz', tip:'padisah', pid:'p30', anne_id:'e_pert', no:32, yil_d:1830, yil_v:1876,
     img: WP+'8/8b/Abdülaziz.jpg/200px-Abdülaziz.jpg',
     baba:'II. Mahmud (30.)', anne:'Pertevniyal Valide Sultan',
     gecis_gelen:'Ağabeyi Abdülmecid\'in vefatı üzerine.',
@@ -444,7 +442,7 @@ const NODES = [
   { id:'e_guls', ad:'Gülistü Kadın (Çerkez)', tip:'es', sahi:'p31' },
 
   // ── 33. V. Murat
-  { id:'p33', ad:'V. Murat', tip:'padisah', pid:'p31', no:33, yil_d:1840, yil_v:1904,
+  { id:'p33', ad:'V. Murat', tip:'padisah', pid:'p31', anne_id:'e_sevk', no:33, yil_d:1840, yil_v:1904,
     img: WP+'9/96/Murad_V.jpg/200px-Murad_V.jpg',
     baba:'Abdülmecid I (31.)', anne:'Şevkefza Kadın (Çerkez)',
     gecis_gelen:'Amcası Abdülaziz indirilince Abdülmecid\'in büyük oğlu olarak tahta geçti.',
@@ -455,7 +453,7 @@ const NODES = [
     badges:[{t:'93 gün — en kısa',c:'#A32D2D',bg:'#FCEBEB'}] },
 
   // ── 34. II. Abdülhamid
-  { id:'p34', ad:'II. Abdülhamid', tip:'padisah', pid:'p31', no:34, yil_d:1842, yil_v:1918,
+  { id:'p34', ad:'II. Abdülhamid', tip:'padisah', pid:'p31', anne_id:'e_tiri', no:34, yil_d:1842, yil_v:1918,
     img: WP+'1/13/Abdülhamid_II.jpg/200px-Abdülhamid_II.jpg',
     baba:'Abdülmecid I (31.)', anne:'Tirimüjgan Kadın (Çerkez)',
     gecis_gelen:'Ağabeyi V. Murat indirilince tahta geçti.',
@@ -466,7 +464,7 @@ const NODES = [
     badges:[{t:'33 yıl',c:'#534AB7',bg:'#EEEDFE'},{t:'Tahttan indirildi',c:'#854F0B',bg:'#FAEEDA'}] },
 
   // ── 35. V. Mehmed Reşad
-  { id:'p35', ad:'V. Mehmed (Reşad)', tip:'padisah', pid:'p31', no:35, yil_d:1844, yil_v:1918,
+  { id:'p35', ad:'V. Mehmed (Reşad)', tip:'padisah', pid:'p31', anne_id:'e_gulc', no:35, yil_d:1844, yil_v:1918,
     img: WP+'8/89/Mehmed_V.jpg/200px-Mehmed_V.jpg',
     baba:'Abdülmecid I (31.)', anne:'Gülcemal Kadın (Çerkez)',
     gecis_gelen:'Ağabeyi II. Abdülhamid İTC tarafından indirilince tahta geçti.',
@@ -477,7 +475,7 @@ const NODES = [
     badges:[{t:'Sembolik iktidar',c:'#993556',bg:'#FBEAF0'}] },
 
   // ── 36. VI. Mehmed Vahideddin
-  { id:'p36', ad:'VI. Mehmed (Vahideddin)', tip:'padisah', pid:'p31', no:36, yil_d:1861, yil_v:1926,
+  { id:'p36', ad:'VI. Mehmed (Vahideddin)', tip:'padisah', pid:'p31', anne_id:'e_guls', no:36, yil_d:1861, yil_v:1926,
     img: WP+'a/a5/Vahdettin.jpg/200px-Vahdettin.jpg',
     baba:'Abdülmecid I (31.)', anne:'Gülistü Kadın (Çerkez)',
     gecis_gelen:'Ağabeyi V. Mehmed Reşad\'ın vefatı üzerine.',
@@ -487,58 +485,32 @@ const NODES = [
     ozet:'Son Osmanlı padişahı. Kurtuluş Savaşı\'na karşı çıktı. Sürgünde vefat etti.',
     badges:[{t:'Son padişah',c:'#993556',bg:'#FBEAF0'},{t:'Sürgünde öldü',c:'#854F0B',bg:'#FAEEDA'}] },
   { id:'ertsn', ad:'Şehzade Ertuğrul', tip:'sehzade', pid:'p36', yil_d:1912, yil_v:1926, not:'Son Osmanlı şehzadesi' },
-  // ── I. Mustafa (p15) — çocuğu olmadı, resmi eş kaydı belirsiz
+  // ── Eksik eş node'ları ──────────────────────────────────────────────
   { id:'e_must15_1', ad:'Hanım Sultan', tip:'es', sahi:'p15' },
-
-  // ── II. Osman / Genç (p16)
   { id:'e_osm2_1', ad:'Akile Hatun', tip:'es', sahi:'p16' },
   { id:'e_osm2_2', ad:'Ayşe Hatun', tip:'es', sahi:'p16' },
-
-  // ── IV. Murat (p17)
   { id:'e_mur4_1', ad:'Saçbağlı Hatun', tip:'es', sahi:'p17' },
   { id:'e_mur4_2', ad:'Ayşe Sultan', tip:'es', sahi:'p17' },
-
-  // ── II. Süleyman (p20) — çocuğu olmadı
   { id:'e_suly2_1', ad:'Dilruba Hatun', tip:'es', sahi:'p20' },
-
-  // ── II. Ahmed (p21)
   { id:'e_ahm2_1', ad:'Rabia Sultan', tip:'es', sahi:'p21' },
   { id:'e_ahm2_2', ad:'Şahin Hatun', tip:'es', sahi:'p21' },
-
-  // ── I. Mahmud (p24) — çocuğu olmadı
   { id:'e_mah1_1', ad:'Akbıyık Hanım Sultan', tip:'es', sahi:'p24' },
-
-  // ── III. Osman (p25) — çocuğu olmadı
   { id:'e_osm3_1', ad:'Ferhunde Hatun', tip:'es', sahi:'p25' },
-
-  // ── III. Selim (p28) — çocuğu olmadı
   { id:'e_sel3_1', ad:'Refet Kadın', tip:'es', sahi:'p28' },
   { id:'e_sel3_2', ad:'Zibifer Hatun', tip:'es', sahi:'p28' },
-
-  // ── IV. Mustafa (p29) — çocuğu olmadı
   { id:'e_must4_1', ad:'Peykidil Hanım', tip:'es', sahi:'p29' },
-
-  // ── Abdülaziz (p32)
   { id:'e_aziz_1', ad:'Dürrünev Kadın', tip:'es', sahi:'p32' },
   { id:'e_aziz_2', ad:'Edadil Kadın', tip:'es', sahi:'p32' },
   { id:'e_aziz_3', ad:'Hayranidil Kadın', tip:'es', sahi:'p32' },
-
-  // ── V. Murat (p33)
-  { id:'e_vmur_1', ad:'Refikā Kadın (Çerkez)', tip:'es', sahi:'p33' },
+  { id:'e_vmur_1', ad:'Refikâ Kadın (Çerkez)', tip:'es', sahi:'p33' },
   { id:'e_vmur_2', ad:'Şayan Kadın (Çerkez)', tip:'es', sahi:'p33' },
-
-  // ── II. Abdülhamid (p34)
-  { id:'e_abh2_1', ad:'Nazikeda Kadın Efendi (Çerkez)', tip:'es', sahi:'p34' },
+  { id:'e_abh2_1', ad:'Nazikeda Kadın (Çerkez)', tip:'es', sahi:'p34' },
   { id:'e_abh2_2', ad:'Bedrifelek Kadın (Çerkez)', tip:'es', sahi:'p34' },
   { id:'e_abh2_3', ad:'Bidar Kadın (Çerkez)', tip:'es', sahi:'p34' },
   { id:'e_abh2_4', ad:'Emsalinur Kadın (Çerkez)', tip:'es', sahi:'p34' },
-
-  // ── V. Mehmed Reşad (p35)
   { id:'e_vres_1', ad:'Dürriaden Kadın (Çerkez)', tip:'es', sahi:'p35' },
   { id:'e_vres_2', ad:'Mihrengiz Kadın (Çerkez)', tip:'es', sahi:'p35' },
   { id:'e_vres_3', ad:'Kamures Kadın (Çerkez)', tip:'es', sahi:'p35' },
-
-  // ── VI. Mehmed Vahideddin (p36)
   { id:'e_vahid_1', ad:'Nazikeda Kadın Efendi', tip:'es', sahi:'p36' },
   { id:'e_vahid_2', ad:'Nevzad Kadın (Çerkez)', tip:'es', sahi:'p36' },
   { id:'e_vahid_3', ad:'İnşirah Kadın (Çerkez)', tip:'es', sahi:'p36' },

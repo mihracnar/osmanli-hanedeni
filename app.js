@@ -462,7 +462,43 @@ diagram.addDiagramListener('BackgroundSingleClicked', () => {
 document.getElementById('btnFit').onclick      = () => diagram.zoomToFit();
 document.getElementById('btnZoomIn').onclick   = () => diagram.commandHandler.increaseZoom(1.25);
 document.getElementById('btnZoomOut').onclick  = () => diagram.commandHandler.decreaseZoom(1.25);
-// btnMenu & sidebar ileride kullanılacak
+// ── Panel toggle'ları ──────────────────────────────────────────────────────
+const isMobile = () => window.innerWidth <= 680;
+
+function initPanelStates() {
+  const mobile = isMobile();
+
+  // Filtre & lejant: panel-collapsed mantığı (header tıklanabilir, body açılır/kapanır)
+  // Masaüstü: açık | Mobil: kapalı
+  [
+    { btnId:'btnToggleFilters', panelId:'filter-panel' },
+    { btnId:'btnToggleLegend',  panelId:'legend'       },
+  ].forEach(({ btnId, panelId }) => {
+    const btn   = document.getElementById(btnId);
+    const panel = document.getElementById(panelId);
+    if (!btn || !panel) return;
+    if (mobile) panel.classList.add('panel-collapsed');
+    btn.addEventListener('click', () => {
+      panel.classList.toggle('panel-collapsed');
+    });
+  });
+
+  // Minimap: zoom butonu ile aç/kapat (mm-hidden class)
+  const mmBtn  = document.getElementById('btnToggleMinimap');
+  const mmWrap = document.getElementById('minimap-wrap');
+  if (mmBtn && mmWrap) {
+    if (mobile) {
+      mmWrap.classList.add('mm-hidden');
+      mmBtn.classList.remove('active');
+    }
+    mmBtn.addEventListener('click', function() {
+      mmWrap.classList.toggle('mm-hidden');
+      this.classList.toggle('active');
+    });
+  }
+}
+
+initPanelStates();
 document.getElementById('detailClose').onclick = () =>
   document.getElementById('detail').classList.add('hidden');
 
