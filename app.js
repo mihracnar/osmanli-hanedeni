@@ -25,6 +25,8 @@ function nodeStyle(d) {
 const diagram = $(go.Diagram, 'myDiagramDiv', {
   'undoManager.isEnabled': false,
   'animationManager.isEnabled': false,
+  'toolManager.gestureBehavior': go.ToolManager.GestureZoom,
+  maxScale: 4, minScale: 0.05,
   allowZoom: true,
   allowHorizontalScroll: true,
   allowVerticalScroll: true,
@@ -50,7 +52,7 @@ diagram.linkTemplate =
   $(go.Link, {
     routing: go.Routing.Orthogonal,
     corner: 4,
-    curve: go.Curve.JumpOver,   // succ okları üzerinden geçince atlama yayı çizer
+    curve: go.Curve.JumpOver,
     selectable: false,
     layerName: 'Background',
   },
@@ -64,7 +66,7 @@ function succShapes() {
     /* halo */
     $(go.Shape, { isPanelMain: true, stroke: 'rgba(255,255,255,0.75)', strokeWidth: 3 }),
     /* çizgi */
-    $(go.Shape, { isPanelMain: true, strokeWidth: 0.5, opacity: 0.75 },
+    $(go.Shape, { isPanelMain: true, strokeWidth: 0.4, opacity: 0.70 },
       new go.Binding('stroke',          'tip', t => SUCC_STYLE[t].stroke),
       new go.Binding('strokeDashArray', 'tip', t => {
         const d = SUCC_STYLE[t].dash;
@@ -93,17 +95,28 @@ function succShapes() {
 /* Dikey geçiş: sağdan çık, sola gir, Bezier */
 diagram.linkTemplateMap.add('succ',
   $(go.Link, {
-    routing: go.Routing.AvoidsNodes,
     curve: go.Curve.Bezier,
-    curviness: 100,
-    corner: 30,
-    fromEndSegmentLength: 60,
-    toEndSegmentLength: 60,
-    fromSpot: go.Spot.RightSide,
-    toSpot:   go.Spot.LeftSide,
     isLayoutPositioned: false,
+    isTreeLink: false,
     selectable: false,
     layerName: 'Foreground',
+    computePoints: function() {
+      // Bezier control pointleri: from altı → to üstü, yanlara eğik
+      const fr = this.fromNode, to = this.toNode;
+      if (!fr || !to) return go.Link.prototype.computePoints.call(this);
+      const fb = fr.actualBounds, tb = to.actualBounds;
+      const x1 = fb.centerX, y1 = fb.bottom;
+      const x2 = tb.centerX, y2 = tb.top;
+      const dy = (y2 - y1) * 0.45;
+      const dx = (x2 - x1) * 0.3;
+      const pts = new go.List(go.Point);
+      pts.add(new go.Point(x1, y1));
+      pts.add(new go.Point(x1 + dx, y1 + dy));
+      pts.add(new go.Point(x2 - dx, y2 - dy));
+      pts.add(new go.Point(x2, y2));
+      this.points = pts;
+      return true;
+    }
   },
   ...succShapes()
   )
@@ -112,22 +125,33 @@ diagram.linkTemplateMap.add('succ',
 /* Kardeş geçişi: ÜSTTEN kavisli geç — eşlerin üstünden değil, node'ların üstünden */
 diagram.linkTemplateMap.add('succ-sibling',
   $(go.Link, {
-    routing: go.Routing.AvoidsNodes,
     curve: go.Curve.Bezier,
-    curviness: -110,              // negatif = ÜSTE doğru kavis (node'ların üstünden geçer)
-    corner: 30,
-    fromEndSegmentLength: 40,
-    toEndSegmentLength: 40,
-    fromSpot: go.Spot.TopSide,  // üstten çık
-    toSpot:   go.Spot.TopSide,  // üstten gir
     isLayoutPositioned: false,
+    isTreeLink: false,
     selectable: false,
     layerName: 'Foreground',
+    computePoints: function() {
+      const fr = this.fromNode, to = this.toNode;
+      if (!fr || !to) return go.Link.prototype.computePoints.call(this);
+      const fb = fr.actualBounds, tb = to.actualBounds;
+      const x1 = fb.centerX, y1 = fb.top;
+      const x2 = tb.centerX, y2 = tb.top;
+      // Üstten yay: control pointler yukarıda
+      const lift = Math.max(60, Math.abs(x2 - x1) * 0.5);
+      const mx = (x1 + x2) / 2;
+      const pts = new go.List(go.Point);
+      pts.add(new go.Point(x1, y1));
+      pts.add(new go.Point(x1, y1 - lift));
+      pts.add(new go.Point(x2, y2 - lift));
+      pts.add(new go.Point(x2, y2));
+      this.points = pts;
+      return true;
+    }
   },
   /* halo */
   $(go.Shape, { isPanelMain: true, stroke: 'rgba(255,255,255,0.75)', strokeWidth: 3 }),
   /* çizgi */
-  $(go.Shape, { isPanelMain: true, strokeWidth: 0.5, opacity: 0.75 },
+  $(go.Shape, { isPanelMain: true, strokeWidth: 0.4, opacity: 0.70 },
     new go.Binding('stroke',          'tip', t => SUCC_STYLE[t].stroke),
     new go.Binding('strokeDashArray', 'tip', t => {
       const d = SUCC_STYLE[t].dash;
@@ -388,24 +412,40 @@ diagram.addDiagramListener('InitialLayoutCompleted', () => {
 const F = {
   periods:     new Set(['kuruluş','yükseliş','duraklama','gerileme','çöküş']),
   succTypes:   new Set(['ogul','erkek','isyan','fetret']),
-  showBio:  true, showSucc: true, showEs: true, showSehzade: true,
+  showSucc: true, showEs: true, showSehzade: true,
 };
 
 function applyFilters() {
   diagram.startTransaction('filter');
+  // Önce padişah görünürlüklerini hesapla (eşler buna bakacak)
+  const padisahVis = {};
+  diagram.nodes.each(n => {
+    const d = n.data; if (!d || d.tip !== 'padisah') return;
+    padisahVis[d.key] = F.periods.has(periodOf(d.no));
+  });
+
   diagram.nodes.each(n => {
     const d = n.data; if (!d) return;
     let vis = true;
-    if (d.tip === 'padisah' && !F.periods.has(periodOf(d.no))) vis = false;
-    if (d.tip === 'es' && !F.showEs) vis = false;
-    if ((d.tip === 'sehzade' || d.tip === 'sultan') && !F.showSehzade) vis = false;
+    if (d.tip === 'padisah') {
+      vis = F.periods.has(periodOf(d.no));
+    } else if (d.tip === 'es') {
+      // Hem showEs filtresi hem de sahibinin dönemi
+      if (!F.showEs) {
+        vis = false;
+      } else if (d.sahi && padisahVis[d.sahi] === false) {
+        vis = false;  // sahibi gizli dönemde
+      }
+    } else if (d.tip === 'sehzade' || d.tip === 'sultan' || d.tip === 'kiz') {
+      if (!F.showSehzade) vis = false;
+    }
     n.visible = vis;
   });
   diagram.links.each(l => {
     const d = l.data; if (!d) return;
     if (d.category === 'succ' || d.category === 'succ-sibling')  l.visible = F.showSucc && F.succTypes.has(d.tip);
     if (d.category === 'esbag') l.visible = F.showEs;
-    if (d.category === '')      l.visible = F.showBio;
+    // category === '' (soy bağı) her zaman görünür
   });
   diagram.commitTransaction('filter');
 }
@@ -502,7 +542,7 @@ initPanelStates();
 document.getElementById('detailClose').onclick = () =>
   document.getElementById('detail').classList.add('hidden');
 
-document.getElementById('togBio').onchange    = e => { F.showBio     = e.target.checked; applyFilters(); };
+// Soy bağı her zaman görünür — filtre yok
 document.getElementById('togSucc').onchange   = e => { F.showSucc    = e.target.checked; applyFilters(); };
 document.getElementById('togEs').onchange     = e => { F.showEs      = e.target.checked; applyFilters(); };
 document.getElementById('togSeh').onchange    = e => { F.showSehzade = e.target.checked; applyFilters(); };

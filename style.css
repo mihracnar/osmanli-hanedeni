@@ -15,7 +15,9 @@ html, body {
   border-bottom: 0.5px solid rgba(107,180,194,0.25);
 }
 #topbar h1 {
-  margin: 0; font-size: 14px; font-weight: 600; color: #d7d2c2;
+  margin: 0; font-size: 18px; font-weight: 600; color: #d7d2c2;
+  font-family: 'Cinzel', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+  letter-spacing: .04em;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
