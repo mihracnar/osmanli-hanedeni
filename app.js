@@ -406,6 +406,7 @@ diagram.addDiagramListener('InitialLayoutCompleted', () => {
   const fitScale = Math.min(vw / sw, vh / sh);
   diagram.scale = fitScale * 2.8;  // daha yakın başla
   diagram.centerRect(diagram.documentBounds);
+  buildFigPanel();
 });
 
 /* ─── Filtreler ─────────────────────────────────────────────────────── */
@@ -568,3 +569,390 @@ $(go.Overview, 'minimap', {
 
 /* ─── Başlat ────────────────────────────────────────────────────────── */
 buildModel();
+
+/* ─── Figür Timeline Paneli (Sol) ─────────────────────────────────── */
+const FIG_DATA = [
+  // ── Veziriazam / Sadrazam
+  {n:'Çandarlı Halil Paşa',       r:'Veziriazam',     s:1360,e:1387},
+  {n:'Çandarlı Ali Paşa',         r:'Veziriazam',     s:1387,e:1406},
+  {n:'Piri Mehmed Paşa',          r:'Veziriazam',     s:1518,e:1523},
+  {n:'Makbul İbrahim Paşa',       r:'Veziriazam',     s:1523,e:1536},
+  {n:'Lütfi Paşa',                r:'Veziriazam',     s:1539,e:1541},
+  {n:'Rüstem Paşa',               r:'Veziriazam',     s:1544,e:1561},
+  {n:'Sokullu Mehmed Paşa',       r:'Veziriazam',     s:1565,e:1579},
+  {n:'Kuyucu Murat Paşa',         r:'Sadrazam',       s:1606,e:1611},
+  {n:'Köprülü Mehmed Paşa',       r:'Sadrazam',       s:1656,e:1661},
+  {n:'Köprülüzade Fazıl Ahmed',   r:'Sadrazam',       s:1661,e:1676},
+  {n:'Merzifonlu Kara Mustafa',   r:'Sadrazam',       s:1676,e:1683},
+  {n:'Köprülüzade Fazıl Mustafa', r:'Sadrazam',       s:1689,e:1691},
+  {n:'Damad İbrahim Paşa',        r:'Sadrazam',       s:1718,e:1730},
+  {n:'Mustafa Reşid Paşa',        r:'Sadrazam',       s:1846,e:1858},
+  {n:'Ali Paşa',                  r:'Sadrazam',       s:1855,e:1871},
+  {n:'Midhat Paşa',               r:'Sadrazam',       s:1872,e:1876},
+  {n:'Kâmil Paşa',                r:'Sadrazam',       s:1885,e:1895},
+  {n:'Talat Paşa',                r:'Sadrazam',       s:1917,e:1918},
+  // ── Şeyhülislam
+  {n:'Zenbilli Ali Efendi',       r:'Şeyhülislam',    s:1503,e:1526},
+  {n:'Ebussuud Efendi',           r:'Şeyhülislam',    s:1545,e:1574},
+  {n:'Çatalcalı Ali Efendi',      r:'Şeyhülislam',    s:1674,e:1686},
+  // ── Kaptan-ı Derya
+  {n:'Barbaros Hayreddin Paşa',   r:'Kaptan-ı Derya', s:1534,e:1546},
+  {n:'Turgut Reis',               r:'Kaptan-ı Derya', s:1546,e:1565},
+  {n:'Kılıç Ali Paşa',            r:'Kaptan-ı Derya', s:1571,e:1587},
+  // ── Mimar
+  {n:'Mimar Sinan',               r:'Mimar',          s:1539,e:1588},
+  {n:'Mimar Mehmed Ağa',          r:'Mimar',          s:1588,e:1622},
+  // ── Bilgin / Sanatçı
+  {n:'Matrakçı Nasuh',            r:'Bilgin / Sanatçı',s:1520,e:1564},
+  {n:'Katip Çelebi',              r:'Bilgin / Sanatçı',s:1630,e:1657},
+  {n:'Evliya Çelebi',             r:'Bilgin / Sanatçı',s:1640,e:1682},
+  {n:'Naima',                     r:'Bilgin / Sanatçı',s:1655,e:1716},
+  {n:'İbrahim Müteferrika',       r:'Bilgin / Sanatçı',s:1720,e:1745},
+  // ── İsyancı / Dönüm Noktası
+  {n:'Şeyh Bedreddin',            r:'İsyancı',        s:1416,e:1416},
+  {n:'Patrona Halil',             r:'İsyancı',        s:1730,e:1730},
+  {n:'Kabakçı Mustafa',           r:'İsyancı',        s:1807,e:1808},
+  {n:'Alemdar Mustafa Paşa',      r:'İsyancı',        s:1808,e:1808},
+  {n:'Mustafa Celaleddin Paşa',   r:'Dönüm Noktası',  s:1860,e:1876},
+];
+
+const FIG_ROLE_C = {
+  'Veziriazam':       '#C8B86A',
+  'Sadrazam':         '#C8B86A',
+  'Şeyhülislam':      '#4AAF9A',
+  'Kaptan-ı Derya':   '#6BB4C2',
+  'Mimar':            '#B87AAE',
+  'Bilgin / Sanatçı': '#9FB8C4',
+  'İsyancı':          '#D4735A',
+
+};
+
+// Yıl → GoJS Y koordinatı mapping (padişah node'larından)
+let yearToY = null;
+
+function buildYearMap() {
+  const pts = [];
+  diagram.nodes.each(n => {
+    const d = n.data;
+    if (!d || d.tip !== 'padisah' || !d.yil_d) return;
+    pts.push({ year: d.yil_d, y: n.location.y });
+    if (d.yil_v) pts.push({ year: d.yil_v, y: n.location.y + n.actualBounds.height });
+  });
+  pts.sort((a, b) => a.year - b.year);
+  // Unique yıllar
+  yearToY = pts.filter((p, i) => i === 0 || p.year !== pts[i-1].year);
+}
+
+function interpY(year) {
+  if (!yearToY || !yearToY.length) return 0;
+  if (year <= yearToY[0].year) return yearToY[0].y;
+  const last = yearToY[yearToY.length - 1];
+  if (year >= last.year) return last.y;
+  for (let i = 0; i < yearToY.length - 1; i++) {
+    const a = yearToY[i], b = yearToY[i + 1];
+    if (year >= a.year && year <= b.year) {
+      const t = (year - a.year) / (b.year - a.year);
+      return a.y + t * (b.y - a.y);
+    }
+  }
+  return 0;
+}
+
+// Sütun ataması — ardışıklar aynı sütunda, çakışanlar yan sütuna
+const FIG_COL_W = 76, FIG_COL_PAD = 4;
+function assignFigCols(figs) {
+  // Rol bazlı gruplar: aynı rol → önce birbirine ardışık olanları aynı sütuna yerleştir
+  // Strateji: role göre sırala, ardından zaman sırasına göre sütun ata
+  // Ardışık: figs[i].e === figs[i+1].s (veya çok yakın, ±5 yıl)
+
+  // Her figürü role göre grupla, sonra birleştirerek sırala
+  const roleOrder = ['Veziriazam','Sadrazam','Şeyhülislam','Kaptan-ı Derya',
+                     'Mimar','Bilgin / Sanatçı','İsyancı','Dönüm Noktası'];
+  const sorted = [...figs].sort((a, b) => {
+    const ra = roleOrder.indexOf(a.r), rb = roleOrder.indexOf(b.r);
+    if (ra !== rb) return (ra === -1 ? 99 : ra) - (rb === -1 ? 99 : rb);
+    return a.s - b.s;
+  });
+
+  // Sütunları role bazlı tahsis et: her rol için bir sütun başlat
+  const roleCols = {}; // role -> col index
+  const cols = [];    // col -> [{s,e,r}]
+
+  sorted.forEach(f => {
+    // Bu rol için bir sütun var mı?
+    if (roleCols[f.r] === undefined) {
+      roleCols[f.r] = cols.length;
+      cols.push([]);
+    }
+    const preferred = roleCols[f.r];
+
+    // Tercih edilen sütunda yer var mı?
+    const colItems = cols[preferred];
+    const last = colItems[colItems.length - 1];
+    if (!last || f.s >= last.e - 2) {
+      // Yer var — aynı sütun
+      colItems.push(f);
+      f._col = preferred;
+    } else {
+      // Çakışma var — yan sütun bul
+      let found = false;
+      for (let ci = 0; ci < cols.length; ci++) {
+        if (ci === preferred) continue;
+        const cl = cols[ci];
+        const la = cl[cl.length - 1];
+        if (!la || f.s >= la.e - 2) {
+          cl.push(f); f._col = ci; found = true; break;
+        }
+      }
+      if (!found) { f._col = cols.length; cols.push([f]); }
+    }
+  });
+
+  // Orijinal sırayı koru (FIG_DATA sırası)
+  figs.forEach(f => { if (f._col === undefined) f._col = 0; });
+  return cols.length;
+}
+
+function buildFigPanel() {
+  buildYearMap();
+  if (!yearToY || !yearToY.length) return;
+
+  const numCols = assignFigCols(FIG_DATA);
+  const barAreaW = numCols * FIG_COL_W + FIG_COL_PAD * 2;
+  const panelW   = 5 + 36 + barAreaW; // period strip + axis + bars
+
+  const panel = document.getElementById('fig-panel');
+  if (!panel) return;
+  panel.style.width = panelW + 'px';
+
+  // Canvas ve diğer panellerin left'ini ayarla
+  const diagramDiv = document.getElementById('myDiagramDiv');
+  if (diagramDiv) diagramDiv.style.left = panelW + 'px';
+  const detail = document.getElementById('detail');
+  if (detail) detail.style.left = (panelW + 14) + 'px';
+
+  // Dönem renk şeritleri (period strip)
+  const strip = document.getElementById('fig-period-strip');
+  strip.innerHTML = '';
+  strip.style.height = '100%';
+  Object.values(PERIODS).forEach(p => {
+    const y1 = interpY(p.s), y2 = interpY(p.e === p.s ? p.s + 1 : p.e);
+    // Bu pikseller GoJS document space — sync'te güncellenir
+    const el = document.createElement('div');
+    el.className = 'period-band-strip';
+    el.dataset.ys = p.s; el.dataset.ye = p.e; el.dataset.c = p.c;
+    el.style.background = p.c;
+    strip.appendChild(el);
+  });
+
+  // Zaman ekseni (axis)
+  const axisInner = document.getElementById('fig-axis-inner');
+  axisInner.innerHTML = '';
+  // Dönem renkleri eksen arka planında
+  Object.values(PERIODS).forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'period-band-axis';
+    el.dataset.ys = p.s; el.dataset.ye = p.e; el.dataset.c = p.c;
+    el.style.background = p.c + '22';
+    axisInner.appendChild(el);
+  });
+  // Yıl etiketleri ve tick'ler
+  for (let y = 1300; y <= 1922; y += 25) {
+    const major = y % 100 === 0, mid = y % 50 === 0 && !major;
+    if (!major && !mid) continue;
+    const yDoc = interpY(y);
+    const tick = document.createElement('div');
+    tick.className = 'ax-tick';
+    tick.dataset.ydoc = yDoc;
+    tick.style.cssText = `width:${major ? 10 : 5}px; opacity:${major ? 0.7 : 0.35};`;
+    axisInner.appendChild(tick);
+    const lbl = document.createElement('div');
+    lbl.className = 'ax-year';
+    lbl.dataset.ydoc = yDoc;
+    lbl.style.cssText = `opacity:${major ? 1 : 0.5}; font-size:${major ? 9 : 7}px;`;
+    lbl.textContent = y;
+    axisInner.appendChild(lbl);
+  }
+
+  // Bar alanı: yüzyıl çizgileri
+  const barsEl = document.getElementById('fig-bars');
+  barsEl.innerHTML = '';
+  for (let y = 1300; y <= 1922; y += 25) {
+    const major = y % 100 === 0, mid = y % 50 === 0 && !major;
+    if (!major && !mid) continue;
+    const yDoc = interpY(y);
+    const line = document.createElement('div');
+    line.className = 'cent-line ' + (major ? 'maj' : 'min');
+    line.dataset.ydoc = yDoc;
+    barsEl.appendChild(line);
+    if (major) {
+      const lbl = document.createElement('div');
+      lbl.className = 'cent-lbl';
+      lbl.dataset.ydoc = yDoc;
+      lbl.textContent = y;
+      barsEl.appendChild(lbl);
+    }
+  }
+
+  // Figür barları
+  FIG_DATA.forEach((f, fi) => {
+    const c = FIG_ROLE_C[f.r] || '#9FB8C4';
+    f._yDocTop = interpY(f.s);
+    f._yDocBot = interpY(f.e === f.s ? f.s + 2 : f.e);
+
+    const bar = document.createElement('div');
+    bar.className = 'fig-bar';
+    bar.dataset.idx = fi;
+    bar.style.cssText = `
+      left:${FIG_COL_PAD + f._col * FIG_COL_W}px;
+      width:${FIG_COL_W - FIG_COL_PAD}px;
+    `;
+    const inner = document.createElement('div');
+    inner.className = 'fig-bar-inner';
+    inner.style.cssText = `background:${c}18; box-shadow: inset 2px 0 0 ${c};`;
+    inner.innerHTML = `
+      <span class="fb-role" style="color:${c}">${f.r}</span>
+      <span class="fb-name">${f.n}</span>
+      <span class="fb-years">${f.s}–${f.e}</span>
+    `;
+    bar.appendChild(inner);
+
+    const tt = document.getElementById('fig-tooltip');
+    bar.addEventListener('mouseenter', () => {
+      tt.querySelector('.tt-role').textContent = f.r;
+      tt.querySelector('.tt-role').style.color  = c;
+      tt.querySelector('.tt-name').textContent  = f.n;
+      tt.querySelector('.tt-years').textContent = f.s + (f.e !== f.s ? '–' + f.e : '');
+      tt.classList.add('on');
+    });
+    bar.addEventListener('mousemove', ev => {
+      tt.style.left = (panelW + 8) + 'px';
+      tt.style.top  = (ev.clientY - 50) + 'px';
+    });
+    bar.addEventListener('mouseleave', () => tt.classList.remove('on'));
+    barsEl.appendChild(bar);
+  });
+
+  syncFigPanel();
+}
+
+function syncFigPanel() {
+  if (!yearToY || !yearToY.length) return;
+  const panel = document.getElementById('fig-panel');
+  if (!panel || panel.style.width === '0px') return;
+
+  const sc  = diagram.scale;
+  const pos = diagram.position;
+  const HDR = 26; // header yüksekliği
+
+  // Yardımcı: GoJS doc Y → panel-relative ekran Y
+  function docToScreen(yDoc) {
+    return (yDoc - pos.y) * sc;
+  }
+
+  // Dönem şeritleri (strip + axis)
+  document.querySelectorAll('.period-band-strip, .period-band-axis').forEach(el => {
+    const ys = parseFloat(el.dataset.ys), ye = parseFloat(el.dataset.ye);
+    const y1 = docToScreen(interpY(ys));
+    const y2 = docToScreen(interpY(ye));
+    el.style.top    = y1 + 'px';
+    el.style.height = Math.max(1, y2 - y1) + 'px';
+  });
+
+  // Axis tick ve etiketler
+  document.querySelectorAll('#fig-axis-inner .ax-tick, #fig-axis-inner .ax-year').forEach(el => {
+    const yDoc = parseFloat(el.dataset.ydoc);
+    el.style.top = docToScreen(yDoc) + 'px';
+  });
+
+  // Yüzyıl çizgileri ve etiketleri
+  document.querySelectorAll('#fig-bars .cent-line, #fig-bars .cent-lbl').forEach(el => {
+    const yDoc = parseFloat(el.dataset.ydoc);
+    el.style.top = (docToScreen(yDoc) + HDR) + 'px';
+  });
+
+  // Figür barları — min yükseklik + runtime çakışma önleme (yan sütun)
+  const MIN_H = 32;
+  const GAP   = 2;     // kutular arası min boşluk
+  const COL_W_RT = FIG_COL_W - FIG_COL_PAD;  // çalışma zamanı sütun genişliği
+
+  // 1. Önce her barın pozisyonunu hesapla (min yükseklik dahil)
+  const barInfos = [];
+  document.querySelectorAll('#fig-bars .fig-bar').forEach(bar => {
+    const f = FIG_DATA[parseInt(bar.dataset.idx)];
+    if (!f) return;
+    const rawTop = docToScreen(f._yDocTop) + HDR;
+    const rawBot = docToScreen(f._yDocBot) + HDR;
+    const natural = rawBot - rawTop;
+    const h = Math.max(MIN_H, natural);
+    // Ortalama: kısa kutular gerçek merkezi etrafında genişler
+    const midY = (rawTop + rawBot) / 2;
+    const top  = midY - h / 2;
+    barInfos.push({ bar, f, top, h, col: f._col });
+  });
+
+  // 2. Runtime çakışma kontrolü: aynı sütunda üst üste binen kutular
+  //    → çakışanı bir sonraki boş sütuna taşı (sadece görsel, _col değişmez)
+  //    Sütunlar: yerleşik kutular { col → [{top, bot}] }
+  const rtCols = {};  // col -> [{top, bot}]
+  function rtOverlaps(col, top, bot) {
+    return (rtCols[col] || []).some(r => top < r.bot + GAP && bot > r.top - GAP);
+  }
+  function rtPlace(col, top, bot) {
+    if (!rtCols[col]) rtCols[col] = [];
+    rtCols[col].push({ top, bot });
+  }
+
+  // barları yukarıdan aşağıya sırala (önce üsttekiler)
+  barInfos.sort((a, b) => a.top - b.top);
+
+  // Mevcut sütun sayısı — JS ile hesaplanmış FIG_COL_W * numCols
+  const existingCols = Math.max(...FIG_DATA.map(f => f._col)) + 1;
+
+  barInfos.forEach(({ bar, f, top, h, col }) => {
+    const bot = top + h;
+    let assignedCol = col;
+
+    // Orijinal sütunda yer var mı?
+    if (rtOverlaps(assignedCol, top, bot)) {
+      // Sırayla dene: önce orijinal sütunları, sonra yeni sütun ekle
+      let found = false;
+      for (let c = 0; c <= existingCols + 2; c++) {
+        if (!rtOverlaps(c, top, bot)) {
+          assignedCol = c;
+          found = true;
+          break;
+        }
+      }
+    }
+    rtPlace(assignedCol, top, bot);
+
+    // Genişlik: panel genişliğini aşmaması için panelW'den hesapla
+    bar.style.left   = (FIG_COL_PAD + assignedCol * FIG_COL_W) + 'px';
+    bar.style.top    = top + 'px';
+    bar.style.height = h + 'px';
+
+    const inner = bar.querySelector('.fig-bar-inner');
+    if (inner) {
+      inner.querySelector('.fb-role').style.display  = h > 10 ? 'block' : 'none';
+      inner.querySelector('.fb-name').style.display  = h > 20 ? 'block' : 'none';
+      inner.querySelector('.fb-years').style.display = h > 38 ? 'block' : 'none';
+    }
+  });
+
+  // Panel genişliğini güncelle (yeni sütunlar eklendiyse)
+  const maxCol = Math.max(...Object.keys(rtCols).map(Number));
+  const newBarW = (maxCol + 1) * FIG_COL_W + FIG_COL_PAD * 2;
+  const panelEl = document.getElementById('fig-panel');
+  if (panelEl) {
+    const axisW = 5 + 36;  // period strip + axis
+    const newW = axisW + newBarW;
+    panelEl.style.width = newW + 'px';
+    const diagramDiv = document.getElementById('myDiagramDiv');
+    if (diagramDiv) diagramDiv.style.left = newW + 'px';
+    const detail = document.getElementById('detail');
+    if (detail) detail.style.left = (newW + 14) + 'px';
+  }
+}
+
+diagram.addDiagramListener('ViewportBoundsChanged', syncFigPanel);

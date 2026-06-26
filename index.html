@@ -12,13 +12,28 @@
 </head>
 <body>
 
+<!-- TOPBAR -->
 <header id="topbar">
   <h1>Osmanlı Hanedanı — Soy Ağacı</h1>
 </header>
 
+<!-- SOL: Figür Timeline Paneli -->
+<div id="fig-panel">
+  <!-- Dönem renk şeridi (en sol 5px) -->
+  <div id="fig-period-strip"></div>
+  <!-- Zaman ekseni (yıl etiketleri) -->
+  <div id="fig-axis"><div id="fig-axis-inner"></div></div>
+  <!-- Bar alanı -->
+  <div id="fig-bars-wrap">
+    <div id="fig-panel-hdr">Dönemin Önemli Figürleri</div>
+    <div id="fig-bars"></div>
+  </div>
+</div>
+
+<!-- CANVAS -->
 <div id="myDiagramDiv"></div>
 
-<!-- ZOOM + MİNİMAP TOGGLE (sol alt) -->
+<!-- SAĞ: ZOOM KONTROLLER -->
 <div id="zoom-controls">
   <button class="zc-btn" id="btnZoomIn"  title="Yakınlaş">＋</button>
   <button class="zc-btn" id="btnFit"     title="Sığdır">⊡</button>
@@ -27,34 +42,37 @@
   <button class="zc-btn zc-toggle active" id="btnToggleMinimap" title="Mini harita">▣</button>
 </div>
 
-<!-- MİNİMAP -->
+<!-- SAĞ: MİNİMAP -->
 <div id="minimap-wrap">
-  <div id="minimap-header">
-    <span id="minimap-title">Harita</span>
-  </div>
+  <div id="minimap-header"><span id="minimap-title">Harita</span></div>
   <div id="minimap"></div>
 </div>
 
-<!-- LEJANT — sağ alt, başlığı tıklanabilir toggle -->
+<!-- SAĞ ALT: LEJANT -->
 <div id="legend">
   <div class="panel-header" id="btnToggleLegend">
-    <span>Lejant</span>
-    <span class="panel-arrow">▾</span>
+    <span>Lejant</span><span class="panel-arrow">▾</span>
   </div>
   <div class="panel-body leg-body">
-    <div class="leg"><div class="leg-line leg-bio"></div> Soy bağı</div>
-    <div class="leg"><div class="leg-line" style="background:#4AAF9A"></div> Oğul geçişi</div>
+    <div class="leg-section">Saltanat geçişleri</div>
+    <div class="leg"><div class="leg-line" style="background:#4AAF9A"></div> Oğul</div>
     <div class="leg"><div class="leg-line leg-dash" style="color:#6BB4C2"></div> Kardeş</div>
     <div class="leg"><div class="leg-line leg-dash" style="color:#D4735A"></div> İsyan</div>
     <div class="leg"><div class="leg-line leg-dash" style="color:#C8B86A"></div> Fetret</div>
+    <div class="leg-section" style="margin-top:7px">Önemli Figürler</div>
+    <div class="leg"><div class="leg-dot" style="background:#C8B86A"></div> Veziriazam / Sadrazam</div>
+    <div class="leg"><div class="leg-dot" style="background:#4AAF9A"></div> Şeyhülislam</div>
+    <div class="leg"><div class="leg-dot" style="background:#6BB4C2"></div> Kaptan-ı Derya</div>
+    <div class="leg"><div class="leg-dot" style="background:#B87AAE"></div> Mimar</div>
+    <div class="leg"><div class="leg-dot" style="background:#9FB8C4"></div> Bilgin / Sanatçı</div>
+    <div class="leg"><div class="leg-dot" style="background:#D4735A"></div> İsyancı</div>
   </div>
 </div>
 
-<!-- FİLTRELER — sağ üst, başlığı tıklanabilir toggle -->
+<!-- SAĞ ÜST: FİLTRELER -->
 <div id="filter-panel">
   <div class="panel-header" id="btnToggleFilters">
-    <span>Filtreler</span>
-    <span class="panel-arrow">▾</span>
+    <span>Filtreler</span><span class="panel-arrow">▾</span>
   </div>
   <div class="panel-body fp-body">
     <div class="fp-section">
@@ -96,6 +114,13 @@
 <div id="detail" class="hidden">
   <button id="detailClose">✕</button>
   <div id="detailBody"></div>
+</div>
+
+<!-- Figür tooltip -->
+<div id="fig-tooltip">
+  <div class="tt-role"></div>
+  <div class="tt-name"></div>
+  <div class="tt-years"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/gojs@2.3.18/release/go.js"></script>

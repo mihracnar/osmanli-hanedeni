@@ -16,9 +16,102 @@ html, body {
 }
 #topbar h1 {
   margin: 0; font-size: 18px; font-weight: 600; color: #d7d2c2;
-  font-family: 'Cinzel', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+  font-family: 'Cinzel', 'Palatino Linotype', Georgia, serif;
   letter-spacing: .04em;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ── SOL: FİGÜR TİMELINE PANELİ ───────────── */
+#fig-panel {
+  position: fixed; top: 48px; left: 0; bottom: 0;
+  display: flex; flex-direction: row;
+  background: rgba(8,22,46,0.96);
+  border-right: 0.5px solid rgba(107,180,194,0.18);
+  z-index: 15; overflow: hidden;
+  width: 0; /* JS ile set edilir */
+  transition: width .0s; /* anında */
+}
+
+/* Dönem renk şeridi — en sol 5px */
+#fig-period-strip {
+  width: 5px; flex-shrink: 0;
+  position: relative; overflow: hidden;
+}
+.period-band-strip {
+  position: absolute; left: 0; width: 5px;
+  opacity: 0.65;
+}
+
+/* Zaman ekseni — yıl etiketleri, 36px */
+#fig-axis {
+  width: 36px; flex-shrink: 0;
+  position: relative; overflow: hidden;
+  border-right: 0.5px solid rgba(107,180,194,0.10);
+}
+#fig-axis-inner {
+  position: absolute; top: 0; left: 0; right: 0;
+  transform-origin: top left;
+}
+.ax-year {
+  position: absolute; right: 5px;
+  font-size: 8px; color: rgba(107,180,194,0.50);
+  font-family: 'Courier New', monospace;
+  transform: translateY(-50%); white-space: nowrap;
+}
+.ax-tick {
+  position: absolute; right: 0; height: 1px;
+  background: rgba(107,180,194,0.35);
+}
+.period-band-axis {
+  position: absolute; left: 0; right: 0;
+  opacity: 0.40;
+}
+
+/* Bar alanı */
+#fig-bars-wrap {
+  flex: 1; position: relative; overflow: hidden;
+}
+#fig-panel-hdr {
+  position: absolute; top: 0; left: 0; right: 0; height: 26px;
+  background: rgba(8,22,46,0.99);
+  border-bottom: 0.5px solid rgba(107,180,194,0.10);
+  display: flex; align-items: center; padding: 0 8px;
+  font-size: 8px; text-transform: uppercase; letter-spacing: .08em;
+  color: rgba(107,180,194,0.35); z-index: 2; white-space: nowrap;
+}
+#fig-bars {
+  position: absolute; top: 26px; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+}
+.fig-bar {
+  position: absolute;
+  border-radius: 3px; overflow: hidden;
+  cursor: pointer; transition: filter .15s;
+}
+.fig-bar:hover { filter: brightness(1.3); }
+.fig-bar-inner {
+  position: absolute; inset: 0;
+  padding: 3px 5px; overflow: hidden;
+}
+.fb-role {
+  font-size: 7px; text-transform: uppercase; letter-spacing: .04em;
+  display: block; margin-bottom: 1px; line-height: 1;
+}
+.fb-name { font-size: 9px; font-weight: 500; color: #e8e4d8; line-height: 1.2; display: block; }
+.fb-years { font-size: 7.5px; opacity: 0.45; display: block; margin-top: 2px; }
+
+/* Yüzyıl çizgileri (bar alanında) */
+.cent-line {
+  position: absolute; left: 0; right: 0; height: 0;
+  pointer-events: none;
+}
+.cent-line.maj { border-top: 1px solid rgba(107,180,194,0.18); }
+.cent-line.min { border-top: 1px dashed rgba(107,180,194,0.06); }
+.cent-lbl {
+  position: absolute; left: 2px;
+  font-size: 7px; color: rgba(107,180,194,0.16);
+  font-family: 'Courier New', monospace;
+  transform: translateY(2px); pointer-events: none;
 }
 
 /* ── CANVAS ─────────────────────────────────── */
@@ -28,24 +121,12 @@ html, body {
   background-image: radial-gradient(circle, rgba(107,180,194,0.10) 1px, transparent 0);
   background-size: 22px 22px;
   touch-action: none;
+  /* left ve right JS ile ayarlanır */
 }
 
-/* ── ORTAK PANEL STİLİ ───────────────────────── */
-.panel-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 7px 10px; cursor: pointer; user-select: none;
-  font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
-  color: rgba(107,180,194,0.75); font-weight: 500;
-  border-bottom: 0.5px solid rgba(107,180,194,0.15);
-}
-.panel-header:hover { color: rgba(107,180,194,1); }
-.panel-arrow { font-size: 12px; transition: transform .2s; line-height: 1; }
-.panel-collapsed .panel-arrow { transform: rotate(-90deg); }
-.panel-collapsed .panel-body { display: none; }
-
-/* ── ZOOM KONTROLLER (sol alt) ───────────────── */
+/* ── SAĞ: ZOOM KONTROLLER ─────────────────── */
 #zoom-controls {
-  position: fixed; bottom: 16px; left: 14px; z-index: 160;
+  position: fixed; bottom: 16px; right: 14px; z-index: 160;
   display: flex; flex-direction: column; gap: 6px;
 }
 .zc-btn {
@@ -61,21 +142,21 @@ html, body {
 .zc-toggle { font-size: 13px; }
 .zc-divider { height: 0.5px; background: rgba(107,180,194,0.20); margin: 2px 0; }
 
-/* ── MİNİMAP (sol alt, zoom yanında) ────────── */
+/* ── SAĞ: MİNİMAP ────────────────────────── */
 #minimap-wrap {
-  position: fixed; bottom: 16px; left: 58px; z-index: 150;
+  position: fixed; bottom: 16px; right: 58px; z-index: 150;
   background: rgba(10,27,54,0.92);
   border: 0.5px solid rgba(107,180,194,0.30);
   border-radius: 10px; overflow: hidden;
   box-shadow: 0 2px 12px rgba(0,0,0,0.35);
   width: 180px;
   transition: opacity .2s, transform .2s;
-  transform-origin: bottom left;
+  transform-origin: bottom right;
 }
+
 #minimap-wrap.mm-hidden { opacity: 0; pointer-events: none; transform: scale(0.92); }
 #minimap-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 5px 8px 3px;
+  display: flex; align-items: center; padding: 5px 8px 3px;
 }
 #minimap-title {
   font-size: 9px; text-transform: uppercase; letter-spacing: .08em;
@@ -83,9 +164,9 @@ html, body {
 }
 #minimap { width: 180px; height: 220px; background: transparent; }
 
-/* ── LEJANT (sağ alt) ────────────────────────── */
+/* ── SAĞ: LEJANT ────────────────────────── */
 #legend {
-  position: fixed; bottom: 16px; right: 14px; z-index: 150;
+  position: fixed; bottom: 16px; left: 14px; z-index: 150;
   background: rgba(10,27,54,0.92);
   border: 0.5px solid rgba(107,180,194,0.25);
   border-radius: 10px; overflow: hidden;
@@ -95,12 +176,17 @@ html, body {
 .leg-body { padding: 7px 10px 9px; }
 .leg { display: flex; align-items: center; gap: 5px; margin-bottom: 4px; font-size: 10px; color: #9FB8C4; }
 .leg:last-child { margin-bottom: 0; }
+.leg-section {
+  font-size: 8px; text-transform: uppercase; letter-spacing: .07em;
+  color: rgba(107,180,194,0.45); margin: 4px 0 3px; font-weight: 500;
+}
+.leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .leg-line { width: 22px; height: 2px; border-radius: 1px; flex-shrink: 0; }
 .leg-bio  { background: #8A9BAE; }
 .leg-dash { background: repeating-linear-gradient(
     90deg, currentColor 0, currentColor 4px, transparent 4px, transparent 8px); }
 
-/* ── FİLTRE PANELİ (sağ üst) ────────────────── */
+/* ── SAĞ: FİLTRE PANELİ ────────────────── */
 #filter-panel {
   position: fixed; top: 60px; right: 14px; z-index: 150;
   background: rgba(10,27,54,0.94);
@@ -124,7 +210,20 @@ html, body {
 .fp-chk input { accent-color: #6BB4C2; cursor: pointer; width: 11px; height: 11px; flex-shrink: 0; }
 .fp-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
-/* ── DETAY PANELİ — masaüstü: sol üst ───────── */
+/* Ortak panel header */
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 10px; cursor: pointer; user-select: none;
+  font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
+  color: rgba(107,180,194,0.75); font-weight: 500;
+  border-bottom: 0.5px solid rgba(107,180,194,0.15);
+}
+.panel-header:hover { color: rgba(107,180,194,1); }
+.panel-arrow { font-size: 12px; transition: transform .2s; line-height: 1; }
+.panel-collapsed .panel-arrow { transform: rotate(-90deg); }
+.panel-collapsed .panel-body { display: none; }
+
+/* ── DETAY PANELİ ────────────────────────── */
 #detail {
   position: fixed; top: 60px; left: 14px;
   width: 310px; max-height: calc(100vh - 80px);
@@ -166,38 +265,36 @@ html, body {
 .drow.doz b { display: none; }
 .drow.doz span { color: #9FB8C4; font-style: italic; }
 
-/* ── MOBİL ───────────────────────────────────── */
-@media (max-width: 680px) {
-  #topbar h1 { font-size: 12.5px; }
+/* ── FİGÜR TOOLTIP ───────────────────────── */
+#fig-tooltip {
+  display: none; position: fixed; z-index: 500;
+  background: rgba(8,22,46,0.97);
+  border: 0.5px solid rgba(107,180,194,0.35);
+  border-radius: 8px; padding: 8px 12px;
+  pointer-events: none; box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+#fig-tooltip.on { display: block; }
+#fig-tooltip .tt-role { font-size: 9px; margin-bottom: 2px; }
+#fig-tooltip .tt-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; color: #d7d2c2; }
+#fig-tooltip .tt-years { font-size: 10px; color: rgba(215,210,194,0.50); }
 
-  /* Detay: bottom sheet, z yüksek */
+/* ── MOBİL ───────────────────────────────── */
+@media (max-width: 680px) {
+  #topbar h1 { font-size: 13px; }
+  #fig-panel { display: none; }
   #detail {
     top: auto; left: 0; right: 0; bottom: 0;
     width: 100%; max-height: 62vh;
-    border-radius: 16px 16px 0 0;
-    border: none; border-top: 0.5px solid rgba(107,180,194,0.25);
+    border-radius: 16px 16px 0 0; border: none;
+    border-top: 0.5px solid rgba(107,180,194,0.25);
     box-shadow: 0 -6px 24px rgba(0,0,0,0.50);
-    transform-origin: bottom center;
-    z-index: 400;
+    z-index: 400; transform-origin: bottom center;
   }
   #detail.hidden { opacity: 1; transform: translateY(100%); }
-
-  /* Mini harita: küçük, zoom'un yanında (sol altta) */
-  #minimap-wrap {
-    left: 58px; bottom: 16px;
-    width: 90px;
-  }
+  #minimap-wrap { right: 58px; bottom: 16px; width: 90px; }
   #minimap { width: 90px; height: 55px; }
-  #minimap-title { font-size: 8px; }
-
-  /* Filtre paneli: mobilde de sağ üstte */
-  #filter-panel { top: 60px; right: 14px; }
-
-  /* Lejant: sağ alt */
-  #legend { bottom: 16px; right: 14px; }
 }
 
-/* scrollbar */
+#sidebar { display: none; }
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-thumb { background: rgba(107,180,194,0.35); border-radius: 2px; }
-#sidebar { display: none; }
